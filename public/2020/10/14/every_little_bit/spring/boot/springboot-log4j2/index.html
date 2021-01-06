@@ -1,0 +1,730 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="是一个软件开发组织">
+  <meta name="author" content="lucas xie">
+  <meta name="keywords" content="andot,andotorg,andot.org,蚁点">
+  <title>Spring Boot 更换 Logging 框架为 Log4J2 - Andot Person Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Andot Person Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      lucas xie
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-10-14 00:00" pubdate>
+        2020年10月14日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">Spring Boot 更换 Logging 框架为 Log4J2</h1>
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年10月20日 凌晨
+                
+              </p>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="Spring-Boot-更换-Logging-框架为-Log4J2"><a href="#Spring-Boot-更换-Logging-框架为-Log4J2" class="headerlink" title="Spring Boot 更换 Logging 框架为 Log4J2"></a>Spring Boot 更换 Logging 框架为 Log4J2</h1><h3 id="排除掉SpringBoot现有Logback依赖"><a href="#排除掉SpringBoot现有Logback依赖" class="headerlink" title="排除掉SpringBoot现有Logback依赖"></a>排除掉SpringBoot现有Logback依赖</h3><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">exclusions</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">exclusion</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>spring-boot-starter-logging<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">exclusion</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">exclusions</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span></code></pre>
+
+<h3 id="加入Log4J2-的依赖"><a href="#加入Log4J2-的依赖" class="headerlink" title="加入Log4J2 的依赖"></a>加入Log4J2 的依赖</h3><pre><code class="hljs apache"><span class="hljs-section">&lt;dependency&gt;</span>
+    <span class="hljs-section">&lt;groupId&gt;</span><span class="hljs-attribute">org</span>.springframework.boot&lt;/groupId&gt;
+    <span class="hljs-section">&lt;artifactId&gt;</span><span class="hljs-attribute">spring</span>-boot-starter-log<span class="hljs-number">4</span>j<span class="hljs-number">2</span>&lt;/artifactId&gt;
+<span class="hljs-section">&lt;/dependency&gt;</span></code></pre>
+
+<h3 id="配置application-yml-配置文件"><a href="#配置application-yml-配置文件" class="headerlink" title="配置application.yml 配置文件"></a>配置application.yml 配置文件</h3><pre><code class="hljs less"><span class="hljs-attribute">logging</span>:
+    <span class="hljs-attribute">config</span>: <span class="hljs-attribute">classpath</span>: config/log4j2-dev.xml</code></pre>
+
+<h3 id="log4j2-dev-xml-根据官方文档进行配置"><a href="#log4j2-dev-xml-根据官方文档进行配置" class="headerlink" title="log4j2-dev.xml 根据官方文档进行配置"></a>log4j2-dev.xml 根据官方文档进行配置</h3><p>地址： <a target="_blank" rel="noopener" href="https://logging.apache.org/log4j/2.x/manual/layouts.html">https://logging.apache.org/log4j/2.x/manual/layouts.html</a></p>
+<p>推荐配置：(网络上找到的不错的配置)</p>
+<pre><code class="hljs dust"><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Configuration</span> <span class="hljs-attr">status</span>=<span class="hljs-string">&quot;INFO&quot;</span> <span class="hljs-attr">monitorInterval</span>=<span class="hljs-string">&quot;30&quot;</span>&gt;</span></span>
+<span class="xml">    <span class="hljs-tag">&lt;<span class="hljs-name">Properties</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-comment">&lt;!--  输出路径  --&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">Property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;logpath&quot;</span>&gt;</span>/Log4j/logs/log/dev<span class="hljs-tag">&lt;/<span class="hljs-name">Property</span>&gt;</span></span>
+<span class="xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">Properties</span>&gt;</span></span>
+<span class="xml">    <span class="hljs-tag">&lt;<span class="hljs-name">Appenders</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">Console</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;Console&quot;</span> <span class="hljs-attr">target</span>=<span class="hljs-string">&quot;SYSTEM_OUT&quot;</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">PatternLayout</span></span></span>
+<span class="xml">                    pattern=&quot;[%d][%-5p][%t] %m (%F:%L)%n&quot;/&gt;</span>
+<span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">Console</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">RollingFile</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;debug&quot;</span> <span class="hljs-attr">fileName</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/debug/erp_debug.log&quot;</span></span></span>
+<span class="xml">                     filePattern=&quot;$</span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml">/debug/erp_debug_%d</span><span class="hljs-template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">-%i.log&quot;&gt;</span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;info&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;DENY&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;NEUTRAL&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;debug&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;ACCEPT&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;DENY&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">PatternLayout</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">&quot;[%d][%-5p][%t] %m (%F:%L)%n&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">TimeBasedTriggeringPolicy</span> <span class="hljs-attr">interval</span>=<span class="hljs-string">&quot;24&quot;</span> <span class="hljs-attr">modulate</span>=<span class="hljs-string">&quot;true&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">SizeBasedTriggeringPolicy</span> <span class="hljs-attr">size</span>=<span class="hljs-string">&quot;50 MB&quot;</span>/&gt;</span>\</span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">DefaultRolloverStrategy</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;30&quot;</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">Delete</span> <span class="hljs-attr">basePath</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/debug&quot;</span> <span class="hljs-attr">maxDepth</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfFileName</span> <span class="hljs-attr">glob</span>=<span class="hljs-string">&quot;erp_debug_*.log&quot;</span>/&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfLastModified</span> <span class="hljs-attr">age</span>=<span class="hljs-string">&quot;15d&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;/<span class="hljs-name">Delete</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">DefaultRolloverStrategy</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">RollingFile</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">RollingFile</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;info&quot;</span> <span class="hljs-attr">fileName</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/info/erp_info.log&quot;</span></span></span>
+<span class="xml">                     filePattern=&quot;$</span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml">/info/erp_info_%d</span><span class="hljs-template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">-%i.log&quot;&gt;</span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;warn&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;DENY&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;NEUTRAL&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;info&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;ACCEPT&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;DENY&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">PatternLayout</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">&quot;[%d][%-5p][%t] %m (%F:%L)%n&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">TimeBasedTriggeringPolicy</span> <span class="hljs-attr">interval</span>=<span class="hljs-string">&quot;24&quot;</span> <span class="hljs-attr">modulate</span>=<span class="hljs-string">&quot;true&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">SizeBasedTriggeringPolicy</span> <span class="hljs-attr">size</span>=<span class="hljs-string">&quot;50 MB&quot;</span>/&gt;</span>\</span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">DefaultRolloverStrategy</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;30&quot;</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">Delete</span> <span class="hljs-attr">basePath</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/info&quot;</span> <span class="hljs-attr">maxDepth</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfFileName</span> <span class="hljs-attr">glob</span>=<span class="hljs-string">&quot;erp_info_*.log&quot;</span>/&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfLastModified</span> <span class="hljs-attr">age</span>=<span class="hljs-string">&quot;15d&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;/<span class="hljs-name">Delete</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">DefaultRolloverStrategy</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">RollingFile</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">RollingFile</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;warn&quot;</span> <span class="hljs-attr">fileName</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/warn/erp_warn.log&quot;</span></span></span>
+<span class="xml">                     filePattern=&quot;$</span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml">/warn/erp_warn_%d</span><span class="hljs-template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">-%i.log&quot;&gt;</span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;error&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;DENY&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;NEUTRAL&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;warn&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;ACCEPT&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;DENY&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">PatternLayout</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">&quot;[%d][%-5p][%t] %m (%F:%L)%n&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">TimeBasedTriggeringPolicy</span> <span class="hljs-attr">interval</span>=<span class="hljs-string">&quot;24&quot;</span> <span class="hljs-attr">modulate</span>=<span class="hljs-string">&quot;true&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">SizeBasedTriggeringPolicy</span> <span class="hljs-attr">size</span>=<span class="hljs-string">&quot;50 MB&quot;</span>/&gt;</span>\</span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">DefaultRolloverStrategy</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;30&quot;</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">Delete</span> <span class="hljs-attr">basePath</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/warn&quot;</span> <span class="hljs-attr">maxDepth</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfFileName</span> <span class="hljs-attr">glob</span>=<span class="hljs-string">&quot;erp_warn_*.log&quot;</span>/&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfLastModified</span> <span class="hljs-attr">age</span>=<span class="hljs-string">&quot;15d&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;/<span class="hljs-name">Delete</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">DefaultRolloverStrategy</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">RollingFile</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">RollingFile</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;error&quot;</span> <span class="hljs-attr">fileName</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/error/erp_error.log&quot;</span></span></span>
+<span class="xml">                     filePattern=&quot;$</span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml">/error/erp_error_%d</span><span class="hljs-template-variable">&#123;yyyy-MM-dd&#125;</span><span class="xml">-%i.log&quot;&gt;</span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;fatal&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;DENY&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;NEUTRAL&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">ThresholdFilter</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;error&quot;</span> <span class="hljs-attr">onMatch</span>=<span class="hljs-string">&quot;ACCEPT&quot;</span> <span class="hljs-attr">onMismatch</span>=<span class="hljs-string">&quot;DENY&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Filters</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">PatternLayout</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">&quot;[%d][%-5p][%t] %m (%F:%L)%n&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">TimeBasedTriggeringPolicy</span> <span class="hljs-attr">interval</span>=<span class="hljs-string">&quot;24&quot;</span> <span class="hljs-attr">modulate</span>=<span class="hljs-string">&quot;true&quot;</span>/&gt;</span></span>
+<span class="xml">                  <span class="hljs-comment">&lt;!--   每个文件最大50M --&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">SizeBasedTriggeringPolicy</span> <span class="hljs-attr">size</span>=<span class="hljs-string">&quot;50 MB&quot;</span>/&gt;</span>\</span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">Policies</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">DefaultRolloverStrategy</span> <span class="hljs-attr">max</span>=<span class="hljs-string">&quot;30&quot;</span>&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;<span class="hljs-name">Delete</span> <span class="hljs-attr">basePath</span>=<span class="hljs-string">&quot;$</span></span></span><span class="hljs-template-variable">&#123;logpath&#125;</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">/error&quot;</span> <span class="hljs-attr">maxDepth</span>=<span class="hljs-string">&quot;1&quot;</span>&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfFileName</span> <span class="hljs-attr">glob</span>=<span class="hljs-string">&quot;erp_error_*.log&quot;</span>/&gt;</span></span>
+<span class="xml">                     <span class="hljs-comment">&lt;!-- 设置最大保存时间为15天--&gt;</span></span>
+<span class="xml">                    <span class="hljs-tag">&lt;<span class="hljs-name">IfLastModified</span> <span class="hljs-attr">age</span>=<span class="hljs-string">&quot;15d&quot;</span>/&gt;</span></span>
+<span class="xml">                <span class="hljs-tag">&lt;/<span class="hljs-name">Delete</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;/<span class="hljs-name">DefaultRolloverStrategy</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">RollingFile</span>&gt;</span></span>
+
+<span class="xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">Appenders</span>&gt;</span></span>
+<span class="xml">   <span class="hljs-comment">&lt;!--切换输出级别--&gt;</span></span>
+<span class="xml">    <span class="hljs-tag">&lt;<span class="hljs-name">Loggers</span>&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;<span class="hljs-name">Root</span> <span class="hljs-attr">level</span>=<span class="hljs-string">&quot;info&quot;</span>&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">AppenderRef</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;Console&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">AppenderRef</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;debug&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">AppenderRef</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;info&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">AppenderRef</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;warn&quot;</span>/&gt;</span></span>
+<span class="xml">            <span class="hljs-tag">&lt;<span class="hljs-name">AppenderRef</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;error&quot;</span>/&gt;</span></span>
+<span class="xml">        <span class="hljs-tag">&lt;/<span class="hljs-name">Root</span>&gt;</span></span>
+<span class="xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">Loggers</span>&gt;</span></span>
+<span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">Configuration</span>&gt;</span></span></code></pre>
+
+<h3 id="注意的地方"><a href="#注意的地方" class="headerlink" title="注意的地方"></a>注意的地方</h3><p>log4j2的配置文件是支持yml格式，但是如果使用yml格式的需要加入yml解析依赖包才能起作用，要不然有错误</p>
+<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>com.fasterxml.jackson.dataformat<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>jackson-dataformat-yaml<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span></code></pre>
+
+<blockquote>
+<p>如果不加这个依赖，会有项目启动报错：Could not initialize Log4J2 logging from classpath:log4j2-dev.yml</p>
+</blockquote>
+<h3 id="SpringBoot配置文件中还可以加入打印级别指定"><a href="#SpringBoot配置文件中还可以加入打印级别指定" class="headerlink" title="SpringBoot配置文件中还可以加入打印级别指定"></a>SpringBoot配置文件中还可以加入打印级别指定</h3><pre><code class="hljs dts"><span class="hljs-symbol">logging:</span>
+<span class="hljs-symbol">    level:</span>
+        org.springframework=INFO</code></pre>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/SpringBoot-Logging-Log4J2-Java/">SpringBoot,Logging,Log4J2,Java</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明蚁点博客出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/10/15/spring/security/oauth/resource-server/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Spring Security OAuth2 Resource Server 创建</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/10/12/every_little_bit/docker/docker-compose-restart/">
+                        <span class="hidden-mobile">Docker compose 启动的容器设置开启自动启该容器</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://andot.org/2020/10/14/every_little_bit/spring/boot/springboot-log4j2/';
+        this.page.identifier = '/2020/10/14/every_little_bit/spring/boot/springboot-log4j2/';
+      };
+      function loadDisqus() {
+        (function () {
+          var d = document,
+            s = d.createElement('script');
+          s.src = '//' + '' + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      }
+      waitElementVisible('disqus_thread', loadDisqus);
+    </script>
+    <noscript>Please enable JavaScript to view the
+      <a target="_blank" href="https://disqus.com/?ref_noscript" rel="nofollow noopener noopener">comments powered by Disqus.</a>
+    </noscript>
+  </div>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'false' === 'true',
+      loop: 'all',
+      order: 'random',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"/img/cover.jpg"},{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"https://...cover.jpg"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+  <!-- 备案信息 -->
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" target="_blank"
+       rel="nofollow noopener">鲁ICP证 号</a>
+    
+      <a
+        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=12345678"
+        rel="nofollow noopener"
+        class="beian-police"
+        target="_blank"
+      >
+        <span class="beian-police-sep">&nbsp;|&nbsp;</span>
+        
+          <img src="/img/police_beian.png" srcset="/img/loading.gif" alt="police-icon" />
+        
+        <span>鲁公网安备12345678号</span>
+      </a>
+     
+  </div>
+
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Spring Boot 更换 Logging 框架为 Log4J2&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
