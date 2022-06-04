@@ -1,0 +1,683 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="是一个软件开发组织">
+  <meta name="author" content="lucas xie">
+  <meta name="keywords" content="andot,andotorg,andot.org,蚁点">
+  <title>深入分析MySQL replace 与 on duplicate key update 关键词 - Andot Person Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Andot Person Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/images/post_banner.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      lucas xie
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-10-14 15:42" pubdate>
+        2021年10月14日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      813 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      11
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-post-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        截止当前共有 <span id="leancloud-post-views"></span> 次阅读
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">深入分析MySQL replace 与 on duplicate key update 关键词</h1>
+            
+              <p class="note note-info">
+                
+                  版权归原作者所有。 本文最后更新于：2022年2月20日 凌晨
+                
+              </p>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="深入分析MySQL-replace-与-on-duplicate-key-update-关键词"><a href="#深入分析MySQL-replace-与-on-duplicate-key-update-关键词" class="headerlink" title="深入分析MySQL replace 与 on duplicate key update 关键词"></a>深入分析MySQL replace 与 on duplicate key update 关键词</h1><h2 id="建立一张数据表"><a href="#建立一张数据表" class="headerlink" title="建立一张数据表"></a>建立一张数据表</h2><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> <span class="hljs-string">`test`</span>.<span class="hljs-string">`test_unique_key`</span> (
+ <span class="hljs-string">`id`</span> <span class="hljs-built_in">varchar</span>(<span class="hljs-number">32</span>) <span class="hljs-keyword">NOT</span> <span class="hljs-literal">NULL</span>,
+ <span class="hljs-string">`name`</span> <span class="hljs-built_in">varchar</span>(<span class="hljs-number">255</span>) <span class="hljs-literal">NULL</span>,
+ <span class="hljs-string">`term_id`</span> <span class="hljs-built_in">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-literal">NULL</span>,
+ <span class="hljs-string">`class_id`</span> <span class="hljs-built_in">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-literal">NULL</span>,
+ <span class="hljs-string">`course_id`</span> <span class="hljs-built_in">varchar</span>(<span class="hljs-number">64</span>) <span class="hljs-literal">NULL</span>,
+ PRIMARY <span class="hljs-keyword">KEY</span> (<span class="hljs-string">`id`</span>),
+ <span class="hljs-keyword">UNIQUE</span> <span class="hljs-keyword">INDEX</span> <span class="hljs-string">`unique`</span>(<span class="hljs-string">`term_id`</span>, <span class="hljs-string">`class_id`</span>, <span class="hljs-string">`course_id`</span>) <span class="hljs-keyword">USING</span> BTREE
+);</code></pre>
+
+<p>查看REPLACE …</p>
+<h2 id="语句执行情况"><a href="#语句执行情况" class="headerlink" title="语句执行情况"></a>语句执行情况</h2><h3 id="1、先测试主键一样，唯一键不一样"><a href="#1、先测试主键一样，唯一键不一样" class="headerlink" title="1、先测试主键一样，唯一键不一样"></a>1、先测试主键一样，唯一键不一样</h3><pre><code class="hljs sql"><span class="hljs-keyword">REPLACE</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-keyword">id</span>, <span class="hljs-keyword">NAME</span>, term_id, class_id, course_id )
+<span class="hljs-keyword">VALUES</span>( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2001&#x27;</span>, <span class="hljs-string">&#x27;您好&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2002&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2003&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2004&#x27;</span>);
+ 
+<span class="hljs-keyword">REPLACE</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-keyword">id</span>, <span class="hljs-keyword">NAME</span>, term_id, class_id, course_id )
+<span class="hljs-keyword">VALUES</span>( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2001&#x27;</span>, <span class="hljs-string">&#x27;您好&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2002&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2003&#x27;</span>, <span class="hljs-literal">NULL</span> );
+ 
+<span class="hljs-keyword">REPLACE</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-keyword">id</span>, <span class="hljs-keyword">NAME</span>, term_id, class_id, course_id )
+<span class="hljs-keyword">VALUES</span>( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2001&#x27;</span>, <span class="hljs-string">&#x27;您好&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2002&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2003&#x27;</span>, <span class="hljs-literal">NULL</span> );</code></pre>
+
+<blockquote>
+<p>执行结果，只剩一条数据 （按照主键进行了更新）<br>​</p>
+</blockquote>
+<p><img src="/images/mysql/insertupdate/1.png" srcset="/img/loading.gif"></p>
+<h3 id="2、主键不一样，唯一键一样"><a href="#2、主键不一样，唯一键一样" class="headerlink" title="2、主键不一样，唯一键一样"></a>2、主键不一样，唯一键一样</h3><pre><code class="hljs sql"><span class="hljs-keyword">REPLACE</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-keyword">id</span>, <span class="hljs-keyword">NAME</span>, term_id, class_id, course_id )
+<span class="hljs-keyword">VALUES</span>( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2005&#x27;</span>, <span class="hljs-string">&#x27;您好&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2002&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2003&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2004&#x27;</span> );
+
+<span class="hljs-keyword">REPLACE</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-keyword">id</span>, <span class="hljs-keyword">NAME</span>, term_id, class_id, course_id )
+<span class="hljs-keyword">VALUES</span>( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2006&#x27;</span>, <span class="hljs-string">&#x27;您好&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2002&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2003&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2004&#x27;</span> );</code></pre>
+
+<blockquote>
+<p>由此看出，主键不一样，执行两次，最终剩余一条数据，所以是按照唯一键更新<br>​</p>
+</blockquote>
+<p><img src="/images/mysql/insertupdate/3.png" srcset="/img/loading.gif"></p>
+<h3 id="3、所以说明"><a href="#3、所以说明" class="headerlink" title="3、所以说明"></a>3、所以说明</h3><p>在主键相同唯一键不同时，则使用主键更新，唯一键相同主键不同时使用唯一键更新<br>如果存在主键和唯一索引，主键和唯一索引有一个相同的则被看做唯一标识，所以官方说明的是或者的关系<br>官方原文说明</p>
+<blockquote>
+<p>except that if an old row in the table has the same value as a new row for a PRIMARY KEY or a UNIQUE index, the old row is deleted before the new row is inserted.</p>
+</blockquote>
+<h3 id="4、语句优点"><a href="#4、语句优点" class="headerlink" title="4、语句优点"></a>4、语句优点</h3><p>书写比较简单，就是把插入语句的insert关键字修改replace即可</p>
+<h3 id="5、语句缺点"><a href="#5、语句缺点" class="headerlink" title="5、语句缺点"></a>5、语句缺点</h3><p>但是replace实现原理为如果找到匹配的，是先删除后重新插入</p>
+<h3 id="6、权限说明"><a href="#6、权限说明" class="headerlink" title="6、权限说明"></a>6、权限说明</h3><p>要使用REPLACE，您必须同时拥有表的INSERT和 DELETE权限。</p>
+<h2 id="再看看INSERT-…-ON-DUPLICATE-KEY-UPDATE-语句"><a href="#再看看INSERT-…-ON-DUPLICATE-KEY-UPDATE-语句" class="headerlink" title="再看看INSERT … ON DUPLICATE KEY UPDATE 语句"></a>再看看INSERT … ON DUPLICATE KEY UPDATE 语句</h2><h3 id="1、主键相同，唯一索引不同"><a href="#1、主键相同，唯一索引不同" class="headerlink" title="1、主键相同，唯一索引不同"></a>1、主键相同，唯一索引不同</h3><pre><code class="hljs sql"><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-string">`id`</span>, <span class="hljs-string">`NAME`</span>, <span class="hljs-string">`term_id`</span>, <span class="hljs-string">`class_id`</span>, <span class="hljs-string">`course_id`</span> )
+<span class="hljs-keyword">VALUES</span>
+ ( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2011&#x27;</span>, <span class="hljs-string">&#x27;您好Duplicate&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2012&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c20010&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2011&#x27;</span> ) 
+<span class="hljs-keyword">ON</span> <span class="hljs-keyword">DUPLICATE</span> <span class="hljs-keyword">KEY</span> <span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">name</span> = <span class="hljs-string">&#x27;张三&#x27;</span>
+<span class="hljs-comment">-- 第二次执行，主键相同</span>
+<span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-string">`id`</span>, <span class="hljs-string">`NAME`</span>, <span class="hljs-string">`term_id`</span>, <span class="hljs-string">`class_id`</span>, <span class="hljs-string">`course_id`</span> )
+<span class="hljs-keyword">VALUES</span>
+ ( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2011&#x27;</span>, <span class="hljs-string">&#x27;您好Duplicate&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2012&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c20010&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2011&#x27;</span> ) 
+<span class="hljs-keyword">ON</span> <span class="hljs-keyword">DUPLICATE</span> <span class="hljs-keyword">KEY</span> <span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">name</span> = <span class="hljs-string">&#x27;张三&#x27;</span></code></pre>
+
+<blockquote>
+<p>执行结果，因为不存在，则直接插入<br>​</p>
+</blockquote>
+<p><img src="/images/mysql/insertupdate/4.png" srcset="/img/loading.gif"></p>
+<p><img src="/images/mysql/insertupdate/5.png" srcset="/img/loading.gif"></p>
+<h3 id="2、唯一索引相同，主键不同"><a href="#2、唯一索引相同，主键不同" class="headerlink" title="2、唯一索引相同，主键不同"></a>2、唯一索引相同，主键不同</h3><pre><code class="hljs sql"><span class="hljs-keyword">INSERT</span> <span class="hljs-keyword">INTO</span> test_unique_key ( <span class="hljs-string">`id`</span>, <span class="hljs-string">`NAME`</span>, <span class="hljs-string">`term_id`</span>, <span class="hljs-string">`class_id`</span>, <span class="hljs-string">`course_id`</span> )
+<span class="hljs-keyword">VALUES</span>( <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2012&#x27;</span>, <span class="hljs-string">&#x27;您好Duplicate&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2012&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c20010&#x27;</span>, <span class="hljs-string">&#x27;17b2ee26583000163e0b2e12010c2011&#x27;</span> ) 
+<span class="hljs-keyword">ON</span> <span class="hljs-keyword">DUPLICATE</span> <span class="hljs-keyword">KEY</span> <span class="hljs-keyword">UPDATE</span> <span class="hljs-keyword">name</span> = <span class="hljs-string">&#x27;张三1&#x27;</span></code></pre>
+
+<blockquote>
+<p>主键不同，唯一索引，也是更新数据<br>​</p>
+</blockquote>
+<p><img src="/images/mysql/insertupdate/6.png" srcset="/img/loading.gif"></p>
+<h3 id="3、综上所述"><a href="#3、综上所述" class="headerlink" title="3、综上所述"></a>3、综上所述</h3><p>在主键相同唯一键不同时，则使用主键更新，唯一键相同主键不同时使用唯一键更新 主键与唯一索引也为或者关系</p>
+<h3 id="4、语句优点-1"><a href="#4、语句优点-1" class="headerlink" title="4、语句优点"></a>4、语句优点</h3><p>实际执行，则不存在为insert操作，如果存在则是update操作</p>
+<h3 id="5、语句缺点-1"><a href="#5、语句缺点-1" class="headerlink" title="5、语句缺点"></a>5、语句缺点</h3><p>该语句书写起来比较麻烦，相当于是一个插入语句与更新语句的结合体<br>只是不需要书写update 的 where提交，然后MySQL会根据唯一索引或者主键进行判断</p>
+<h3 id="6、权限说明-1"><a href="#6、权限说明-1" class="headerlink" title="6、权限说明"></a>6、权限说明</h3><p>要使用on duplicate key update 您必须同时拥有表的INSERT和 UPDATE权限。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/MySQL/">MySQL</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/replace-duplicate-on-duplicate-key-update-insert-and-update-mysql/">replace, duplicate, on duplicate key update, insert and update, mysql</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明蚁点博客出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/17/mysql/mysql_partition_research/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">MySQL分区可行性调研</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/09/mysql/mysql_implment_indeterminate_column/">
+                        <span class="hidden-mobile">使用MySQL管理型数据库实现不定列数据存储</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://andot.org/2021/10/14/mysql/mysql_insert_update/';
+        this.page.identifier = '/2021/10/14/mysql/mysql_insert_update/';
+      };
+      function loadDisqus() {
+        (function () {
+          var d = document,
+            s = d.createElement('script');
+          s.src = '//' + '' + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      }
+      waitElementVisible('disqus_thread', loadDisqus);
+    </script>
+    <noscript>Please enable JavaScript to view the
+      <a target="_blank" href="https://disqus.com/?ref_noscript" rel="nofollow noopener noopener">comments powered by Disqus.</a>
+    </noscript>
+  </div>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'false' === 'true',
+      loop: 'all',
+      order: 'random',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"/img/cover.jpg"},{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"https://...cover.jpg"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+  <!-- 备案信息 -->
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" target="_blank"
+       rel="nofollow noopener">鲁ICP证 号</a>
+    
+      <a
+        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=12345678"
+        rel="nofollow noopener"
+        class="beian-police"
+        target="_blank"
+      >
+        <span class="beian-police-sep">&nbsp;|&nbsp;</span>
+        
+          <img src="/img/police_beian.png" srcset="/img/loading.gif" alt="police-icon" />
+        
+        <span>鲁公网安备12345678号</span>
+      </a>
+     
+  </div>
+
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 6,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "深入分析MySQL replace 与 on duplicate key update 关键词&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

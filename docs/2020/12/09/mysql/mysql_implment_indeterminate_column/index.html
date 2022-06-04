@@ -1,0 +1,682 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="是一个软件开发组织">
+  <meta name="author" content="lucas xie">
+  <meta name="keywords" content="andot,andotorg,andot.org,蚁点">
+  <title>使用MySQL管理型数据库实现不定列数据存储 - Andot Person Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Andot Person Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/images/post_banner.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      lucas xie
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-12-09 00:00" pubdate>
+        2020年12月9日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      722 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      9
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-post-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        截止当前共有 <span id="leancloud-post-views"></span> 次阅读
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">使用MySQL管理型数据库实现不定列数据存储</h1>
+            
+              <p class="note note-info">
+                
+                  版权归原作者所有。 本文最后更新于：2022年2月20日 凌晨
+                
+              </p>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="使用MySQL管理型数据库实现不定列数据存储"><a href="#使用MySQL管理型数据库实现不定列数据存储" class="headerlink" title="使用MySQL管理型数据库实现不定列数据存储"></a>使用MySQL管理型数据库实现不定列数据存储</h1><blockquote>
+<p>有一需求是需要上传一个excel之后进行查看，但是Excel的列是不固定的，还可以进行反复上传，<br>但是Excel中有一列是必须要有的那就是ID列，这个列可以用来判断第二次上传是更新还是有新加入的数据</p>
+</blockquote>
+<blockquote>
+<p> 就对于这个需求呢，我在MySQL中设计了三张表， 表中重点字段为：</p>
+</blockquote>
+<blockquote>
+<p>只列举重要字段</p>
+</blockquote>
+<blockquote>
+<p>第一张表sample字段为：</p>
+</blockquote>
+<pre><code class="hljs sql">sample_number（样本编号 - 生成策略当前上传的日期然后另外加入4位数的自增从0001开始例如第一个202012090001）、sample_name（上传excel的名字）、excel_url（上传excel存储在服务器的地址）</code></pre>
+
+<blockquote>
+<p>第二张表sample_field字段 （存储列名）</p>
+</blockquote>
+<pre><code class="hljs sql">sample_number（样本编号）、field_name（字段名称）、field_type（STRING、INT、DATE）（字段类型）、is_primary（是否为主键）、field_index（字段排列顺序）</code></pre>
+
+<blockquote>
+<p>第三张表sample_data 字段（存储数据）：</p>
+</blockquote>
+<pre><code class="hljs sql">sample_number（样本编号）、field_name（字段名称）、row_id（行id，用来区分哪些数据是属于同一行）、field_value（具体的列的值，因为字段已经表示了类型，
+所以存储的时候直接都存储字符串，根据需要的时候在去做转换）</code></pre>
+
+<h1 id="错误起源"><a href="#错误起源" class="headerlink" title="错误起源"></a>错误起源</h1><blockquote>
+<p>所以，有了上面三张表之后，那就需要查询数据了，在查询数据的过程中呢，因为需要分页和条件筛选，按照逻辑进行组织了SQL，出错了</p>
+</blockquote>
+<h3 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h3><pre><code class="hljs pgsql">This <span class="hljs-keyword">version</span> <span class="hljs-keyword">of</span> MySQL doesn<span class="hljs-string">&#x27;t yet support &#x27;</span><span class="hljs-keyword">LIMIT</span> &amp; <span class="hljs-keyword">IN</span>/<span class="hljs-keyword">ALL</span>/<span class="hljs-keyword">ANY</span>/<span class="hljs-keyword">SOME</span> subquery<span class="hljs-string">&#x27;</span></code></pre>
+
+<h3 id="在官网中找到了这个限制和解决方式"><a href="#在官网中找到了这个限制和解决方式" class="headerlink" title="在官网中找到了这个限制和解决方式"></a>在官网中找到了这个限制和解决方式</h3><p><a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/mysql-reslimits-excerpt/8.0/en/subquery-restrictions.html">https://dev.mysql.com/doc/mysql-reslimits-excerpt/8.0/en/subquery-restrictions.html</a></p>
+<h3 id="解决方案：在子查询里面在加入一个孙子查询，把LIMIT进行实现了，就可以规避这个问题"><a href="#解决方案：在子查询里面在加入一个孙子查询，把LIMIT进行实现了，就可以规避这个问题" class="headerlink" title="解决方案：在子查询里面在加入一个孙子查询，把LIMIT进行实现了，就可以规避这个问题"></a>解决方案：在子查询里面在加入一个孙子查询，把LIMIT进行实现了，就可以规避这个问题</h3><pre><code class="hljs applescript">MySQL permits a subquery <span class="hljs-keyword">to</span> refer <span class="hljs-keyword">to</span> a stored function <span class="hljs-keyword">that</span> has data-modifying side effects such <span class="hljs-keyword">as</span> inserting rows <span class="hljs-keyword">into</span> a table. For example, <span class="hljs-keyword">if</span> f() inserts rows, <span class="hljs-keyword">the</span> following query can modify data:
+
+SELECT ... WHERE x IN (SELECT f() ...);
+This behavior <span class="hljs-keyword">is</span> an extension <span class="hljs-keyword">to</span> <span class="hljs-keyword">the</span> SQL standard. In MySQL, <span class="hljs-keyword">it</span> can produce nondeterministic results because f() might be executed a different <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> <span class="hljs-keyword">times</span> <span class="hljs-keyword">for</span> different executions <span class="hljs-keyword">of</span> a <span class="hljs-keyword">given</span> query depending <span class="hljs-keyword">on</span> how <span class="hljs-keyword">the</span> optimizer chooses <span class="hljs-keyword">to</span> handle <span class="hljs-keyword">it</span>.
+
+For statement-based <span class="hljs-keyword">or</span> mixed-format replication, one implication <span class="hljs-keyword">of</span> this indeterminism <span class="hljs-keyword">is</span> <span class="hljs-keyword">that</span> such a query can produce different results <span class="hljs-keyword">on</span> <span class="hljs-keyword">the</span> source <span class="hljs-keyword">and</span> <span class="hljs-keyword">its</span> slaves.</code></pre>
+
+<h2 id="最终实现SQL"><a href="#最终实现SQL" class="headerlink" title="最终实现SQL"></a>最终实现SQL</h2><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span>
+	hsd.row_id,
+	hsd.sample_number,
+	hsd.field_name,
+	hsd.field_value 
+<span class="hljs-keyword">FROM</span>
+	hwcss_sample_data <span class="hljs-keyword">AS</span> hsd 
+<span class="hljs-keyword">WHERE</span>
+	<span class="hljs-keyword">EXISTS</span> (
+	<span class="hljs-keyword">SELECT</span>
+		row_id 
+	<span class="hljs-keyword">FROM</span>
+		( <span class="hljs-keyword">SELECT</span> row_id <span class="hljs-keyword">FROM</span> hwcss_sample_data phsd <span class="hljs-keyword">WHERE</span> del_flag = <span class="hljs-number">0</span>
+			 	<span class="hljs-keyword">AND</span> <span class="hljs-keyword">EXISTS</span> (<span class="hljs-keyword">SELECT</span> row_id <span class="hljs-keyword">FROM</span> hwcss_sample_data <span class="hljs-keyword">WHERE</span> field_name = <span class="hljs-string">&#x27;S_Serial&#x27;</span> <span class="hljs-keyword">AND</span> field_value = <span class="hljs-string">&#x27;1001&#x27;</span> <span class="hljs-keyword">AND</span>  phsd.row_id = row_id ) 
+				<span class="hljs-keyword">AND</span> <span class="hljs-keyword">EXISTS</span> (<span class="hljs-keyword">SELECT</span> row_id <span class="hljs-keyword">FROM</span> hwcss_sample_data <span class="hljs-keyword">WHERE</span> field_name = <span class="hljs-string">&#x27;ID&#x27;</span> <span class="hljs-keyword">AND</span> field_value = <span class="hljs-string">&#x27;B112527&#x27;</span> <span class="hljs-keyword">AND</span>  phsd.row_id = row_id )
+				<span class="hljs-comment"># TODO 可以再加入筛选条件</span>
+			<span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> row_id <span class="hljs-keyword">LIMIT</span> <span class="hljs-number">10</span> <span class="hljs-keyword">OFFSET</span> <span class="hljs-number">1</span> ) <span class="hljs-keyword">AS</span> ihsd 
+	<span class="hljs-keyword">WHERE</span>
+		hsd.row_id = ihsd.row_id 
+	) 
+<span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span>
+	hsd.row_id</code></pre>
+
+<h3 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h3><pre><code class="hljs dos">在 row_id 和 field_name 上面做了索引优化，使用B+<span class="hljs-built_in">TREE</span>索引，索引类型为 NORMAL</code></pre>
+
+<p>附录：</p>
+<blockquote>
+<p>MySQL单表数据限制：<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/8.0/en/table-size-limit.html">https://dev.mysql.com/doc/refman/8.0/en/table-size-limit.html</a></p>
+</blockquote>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/MySQL/">MySQL</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Java-MySQL-IN-EXISTS-SQL%E4%BC%98%E5%8C%96-Design/">Java,MySQL,IN,EXISTS,SQL优化,Design</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明蚁点博客出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/10/14/mysql/mysql_insert_update/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">深入分析MySQL replace 与 on duplicate key update 关键词</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/09/mysql/mysql_inner_not_limit/">
+                        <span class="hidden-mobile">MySQL不支持在IN和EXISTS里面加入LIMIT</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://andot.org/2020/12/09/mysql/mysql_implment_indeterminate_column/';
+        this.page.identifier = '/2020/12/09/mysql/mysql_implment_indeterminate_column/';
+      };
+      function loadDisqus() {
+        (function () {
+          var d = document,
+            s = d.createElement('script');
+          s.src = '//' + '' + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      }
+      waitElementVisible('disqus_thread', loadDisqus);
+    </script>
+    <noscript>Please enable JavaScript to view the
+      <a target="_blank" href="https://disqus.com/?ref_noscript" rel="nofollow noopener noopener">comments powered by Disqus.</a>
+    </noscript>
+  </div>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'false' === 'true',
+      loop: 'all',
+      order: 'random',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"/img/cover.jpg"},{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"https://...cover.jpg"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+  <!-- 备案信息 -->
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" target="_blank"
+       rel="nofollow noopener">鲁ICP证 号</a>
+    
+      <a
+        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=12345678"
+        rel="nofollow noopener"
+        class="beian-police"
+        target="_blank"
+      >
+        <span class="beian-police-sep">&nbsp;|&nbsp;</span>
+        
+          <img src="/img/police_beian.png" srcset="/img/loading.gif" alt="police-icon" />
+        
+        <span>鲁公网安备12345678号</span>
+      </a>
+     
+  </div>
+
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 6,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "使用MySQL管理型数据库实现不定列数据存储&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,971 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="是一个软件开发组织">
+  <meta name="author" content="lucas xie">
+  <meta name="keywords" content="andot,andotorg,andot.org,蚁点">
+  <title>Andot Person Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 100vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Andot Person Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/images/banner.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+          </div>
+
+          
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      <div class="container nopadding-md">
+        <div class="py-5" id="board"
+          style=margin-top:0>
+          
+          <div class="container">
+            <div class="row">
+              <div class="col-12 col-md-10 m-auto">
+                
+
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2021/11/17/mysql/mysql_partition_research/" target="_self">
+          <img src="/images/mysql/index.png" srcset="/img/loading.gif" alt="MySQL分区可行性调研">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2021/11/17/mysql/mysql_partition_research/">MySQL分区可行性调研</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/11/17/mysql/mysql_partition_research/">
+          
+          
+            
+          
+          MySQL分区可行性调研一、什么是分区1、MySQL存储原理MySQL是支持ACID事务的，其中一个D就是持久化，持久化就代表了：插入MySQL的数据最终还是要落到磁盘中，这样才能做到真正的持久化。
+MySQL存储文件在磁盘中，每一个数据库里面有很多存储文件：
+针对InnoDB引擎来说
+数据库配置信息文件（.opt）
+表元数据文件（.frm）、表数据文件（ibd）；
+.opt文件包含数据库配置信息
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-11-17 00:00" pubdate>
+              2021-11-17
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/MySQL/">MySQL</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-MySQL-Partition/">Java,MySQL,Partition</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2021/10/14/mysql/mysql_insert_update/" target="_self">
+          <img src="/images/mysql/index.png" srcset="/img/loading.gif" alt="深入分析MySQL replace 与 on duplicate key update 关键词">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2021/10/14/mysql/mysql_insert_update/">深入分析MySQL replace 与 on duplicate key update 关键词</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/10/14/mysql/mysql_insert_update/">
+          
+          
+            
+          
+          深入分析MySQL replace 与 on duplicate key update 关键词建立一张数据表CREATE TABLE `test`.`test_unique_key` (
+ `id` varchar(32) NOT NULL,
+ `name` varchar(255) NULL,
+ `term_id` varchar(64) NULL,
+ `class_id` varchar(64
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-10-14 15:42" pubdate>
+              2021-10-14
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/MySQL/">MySQL</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/replace-duplicate-on-duplicate-key-update-insert-and-update-mysql/">replace, duplicate, on duplicate key update, insert and update, mysql</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/12/09/mysql/mysql_implment_indeterminate_column/" target="_self">
+          <img src="/images/mysql/index.png" srcset="/img/loading.gif" alt="使用MySQL管理型数据库实现不定列数据存储">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/12/09/mysql/mysql_implment_indeterminate_column/">使用MySQL管理型数据库实现不定列数据存储</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/12/09/mysql/mysql_implment_indeterminate_column/">
+          
+          
+            
+          
+          使用MySQL管理型数据库实现不定列数据存储
+有一需求是需要上传一个excel之后进行查看，但是Excel的列是不固定的，还可以进行反复上传，但是Excel中有一列是必须要有的那就是ID列，这个列可以用来判断第二次上传是更新还是有新加入的数据
+
+
+ 就对于这个需求呢，我在MySQL中设计了三张表， 表中重点字段为：
+
+
+只列举重要字段
+
+
+第一张表sample字段为：
+
+sample_number
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-12-09 00:00" pubdate>
+              2020-12-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/MySQL/">MySQL</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-MySQL-IN-EXISTS-SQL%E4%BC%98%E5%8C%96-Design/">Java,MySQL,IN,EXISTS,SQL优化,Design</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/12/09/mysql/mysql_inner_not_limit/" target="_self">
+          <img src="/images/mysql/index.png" srcset="/img/loading.gif" alt="MySQL不支持在IN和EXISTS里面加入LIMIT">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/12/09/mysql/mysql_inner_not_limit/">MySQL不支持在IN和EXISTS里面加入LIMIT</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/12/09/mysql/mysql_inner_not_limit/">
+          
+          
+            
+          
+          MySQL不支持在IN和EXISTS里面加入LIMIT
+有一需求是需要上传一个excel之后进行查看，但是Excel的列是不固定的，还可以进行反复上传，但是Excel中有一列是必须要有的那就是ID列，这个列可以用来判断第二次上传是更新还是有新加入的数据
+
+
+在子查询里面使用了LIMIT，因为需要分页
+
+在官网中找到了这个限制和解决方式https://dev.mysql.com/doc/mysql-
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-12-09 00:00" pubdate>
+              2020-12-09
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/MySQL/">MySQL</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-MySQL-IN-EXISTS-SQL%E4%BC%98%E5%8C%96/">Java,MySQL,IN,EXISTS,SQL优化</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/10/29/maven/maven-auto-package/" target="_self">
+          <img src="/images/post_index.png" srcset="/img/loading.gif" alt="Maven 打包Java应用的时候动态传输打包后jar包的名称">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/29/maven/maven-auto-package/">Maven 打包Java应用的时候动态传输打包后jar包的名称</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/29/maven/maven-auto-package/">
+          
+          
+            
+          
+          Maven 打包Java应用的时候动态传输打包后jar包的名称设置最终名称&lt;build&gt;
+    &lt;finalName&gt;share-cloud-1.0.0&lt;/finalName&gt;
+    ...
+&lt;/build&gt;
+
+打包之后的名称就是share-cloud-1.0.0.jar
+
+但是我不想每次需要修改pom文件的版本，改为自动传入可不可以，直接执行命
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-29 00:00" pubdate>
+              2020-10-29
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-devops-auto-package-Maven-Linux/">Java,devops,auto,package,Maven,Linux</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/10/22/bigdata/elasticsearch/springboot-elasticsearch/" target="_self">
+          <img src="/images/post_index.png" srcset="/img/loading.gif" alt="Spring Boot 整合 Elasticsearch 客户端出现异常 NoSuchFieldError： IGNORE_DEPRECATIONS，解决方案">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/22/bigdata/elasticsearch/springboot-elasticsearch/">Spring Boot 整合 Elasticsearch 客户端出现异常 NoSuchFieldError： IGNORE_DEPRECATIONS，解决方案</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/22/bigdata/elasticsearch/springboot-elasticsearch/">
+          
+          
+            
+          
+          Spring Boot 整合 Elasticsearch 客户端出现异常 NoSuchFieldError: IGNORE_DEPRECATIONS，解决方案启动的时候爆出异常信息：org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#x27;restHighLevelCli
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-22 00:00" pubdate>
+              2020-10-22
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Java-springboot-Spring-Linux-Bigdata-NoSQL-Elasticsearch/">Java,springboot,Spring,Linux,Bigdata,NoSQL,Elasticsearch</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/10/20/java/thread/thread_pool_settings/" target="_self">
+          <img src="/images/post_index.png" srcset="/img/loading.gif" alt="ThreadPoolExecutor 参数设置 [转载]">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/20/java/thread/thread_pool_settings/">ThreadPoolExecutor 参数设置 [转载]</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/20/java/thread/thread_pool_settings/">
+          
+          
+            
+          
+          一、ThreadPoolExecutor的重要参数
+1、corePoolSize：核心线程数
+    * 核心线程会一直存活，及时没有任务需要执行
+    * 当线程数小于核心线程数时，即使有线程空闲，线程池也会优先创建新线程处理
+    * 设置allowCoreThreadTimeout=true（默认false）时，核心线程会超时关闭
+
+2、queueCapacity：任务队列容量（阻塞队列
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-20 00:00" pubdate>
+              2020-10-20
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/Java-Base/">Java Base</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ThreadPoolExecutor-Java-ThreadPool-%E7%BA%BF%E7%A8%8B%E6%B1%A0-%E9%AB%98%E5%B9%B6%E5%8F%91/">ThreadPoolExecutor, Java,ThreadPool,线程池,高并发</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/10/17/bigdata/clickhouse/introduction/what-is-clickhouse/" target="_self">
+          <img src="/images/post_index.png" srcset="/img/loading.gif" alt="什么是ClickHouse？">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/17/bigdata/clickhouse/introduction/what-is-clickhouse/">什么是ClickHouse？</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/17/bigdata/clickhouse/introduction/what-is-clickhouse/">
+          
+          
+            
+          
+          什么是ClickHouse
+ClickHouse是一个面向列的数据库管理系统（DBMS），用于联机分析处理查询（OLAP）。
+
+在面向行的“普通”DBMS中，数据按以下顺序存储：
+
+
+
+Row
+WatchID
+JavaEnable
+Title
+GoodEvent
+EventTime
+
+
+
+#0
+89354350662
+1
+Investor Relations
+1
+2016-05-18 05:19:
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-17 20:04" pubdate>
+              2020-10-17
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/ClickHouse-BigData-Java/">ClickHouse,BigData,Java</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/10/15/spring/security/oauth/resource-server/" target="_self">
+          <img src="/images/post_index.png" srcset="/img/loading.gif" alt="Spring Security OAuth2 Resource Server 创建">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/15/spring/security/oauth/resource-server/">Spring Security OAuth2 Resource Server 创建</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/15/spring/security/oauth/resource-server/">
+          
+          
+            
+          
+          Spring Security OAuth2 Resource Server 创建
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-15 00:00" pubdate>
+              2020-10-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/Security-Spring-Security-OAuth2-Resource-Server-Java/">Security,Spring Security,OAuth2,Resource Server,Java</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2020/10/14/every_little_bit/spring/boot/springboot-log4j2/" target="_self">
+          <img src="/images/post_index.png" srcset="/img/loading.gif" alt="Spring Boot 更换 Logging 框架为 Log4J2">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2020/10/14/every_little_bit/spring/boot/springboot-log4j2/">Spring Boot 更换 Logging 框架为 Log4J2</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2020/10/14/every_little_bit/spring/boot/springboot-log4j2/">
+          
+          
+            
+          
+          Spring Boot 更换 Logging 框架为 Log4J2排除掉SpringBoot现有Logback依赖&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2020-10-14 00:00" pubdate>
+              2020-10-14
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/SpringBoot-Logging-Log4J2-Java/">SpringBoot,Logging,Log4J2,Java</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+
+
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
+  
+  <script>
+    for (ele of document.getElementById("pagination").getElementsByTagName("a")) {
+      ele.href += '#board';
+    }
+  </script>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'false' === 'true',
+      loop: 'all',
+      order: 'random',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"/img/cover.jpg"},{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"https://...cover.jpg"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+  <!-- 备案信息 -->
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" target="_blank"
+       rel="nofollow noopener">鲁ICP证 号</a>
+    
+      <a
+        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=12345678"
+        rel="nofollow noopener"
+        class="beian-police"
+        target="_blank"
+      >
+        <span class="beian-police-sep">&nbsp;|&nbsp;</span>
+        
+          <img src="/img/police_beian.png" srcset="/img/loading.gif" alt="police-icon" />
+        
+        <span>鲁公网安备12345678号</span>
+      </a>
+     
+  </div>
+
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "蚁点博客 - an ant dot 组成andot 蚁点 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

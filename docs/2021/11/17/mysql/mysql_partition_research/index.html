@@ -1,0 +1,677 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="是一个软件开发组织">
+  <meta name="author" content="lucas xie">
+  <meta name="keywords" content="andot,andotorg,andot.org,蚁点">
+  <title>MySQL分区可行性调研 - Andot Person Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Andot Person Blog</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/images/post_banner.jpeg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-author" aria-hidden="true"></i>
+      lucas xie
+    </span>
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-11-17 00:00" pubdate>
+        2021年11月17日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- LeanCloud 统计文章PV -->
+      <span id="leancloud-post-views-container" class="post-meta" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        截止当前共有 <span id="leancloud-post-views"></span> 次阅读
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">MySQL分区可行性调研</h1>
+            
+              <p class="note note-info">
+                
+                  版权归原作者所有。 本文最后更新于：2022年2月20日 凌晨
+                
+              </p>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="MySQL分区可行性调研"><a href="#MySQL分区可行性调研" class="headerlink" title="MySQL分区可行性调研"></a>MySQL分区可行性调研</h1><h2 id="一、什么是分区"><a href="#一、什么是分区" class="headerlink" title="一、什么是分区"></a>一、什么是分区</h2><h3 id="1、MySQL存储原理"><a href="#1、MySQL存储原理" class="headerlink" title="1、MySQL存储原理"></a>1、MySQL存储原理</h3><p>MySQL是支持ACID事务的，其中一个D就是持久化，持久化就代表了：插入MySQL的数据最终还是要落到磁盘中，这样才能做到真正的持久化。</p>
+<p>MySQL存储文件在磁盘中，每一个数据库里面有很多存储文件：</p>
+<p>针对InnoDB引擎来说</p>
+<p>数据库配置信息文件（.opt）</p>
+<p>表元数据文件（.frm）、表数据文件（ibd）；</p>
+<h4 id="opt文件"><a href="#opt文件" class="headerlink" title=".opt文件"></a>.opt文件</h4><p>包含数据库配置信息的文件。</p>
+<h4 id="frm-文件"><a href="#frm-文件" class="headerlink" title=".frm 文件"></a>.frm 文件</h4><p>包含元数据的文件，例如 MySQL 表的表定义。</p>
+<p>对于备份，您必须始终将完整的.frm文件集与备份数据一起保留 ，以便能够恢复备份后更改或删除的表。</p>
+<p>尽管每个InnoDB表都有一个 .frm文件，InnoDB 但在系统表空间中维护自己的表元数据 。</p>
+<h4 id="ibd文件"><a href="#ibd文件" class="headerlink" title=".ibd文件"></a>.ibd文件</h4><p>保存了数据库的数据信息和关联索引信息。</p>
+<p>file-per-table 表空间和通用表空间 的数据文件 。File-per-table 表空间 .ibd文件包含单个表和关联的索引数据。通用表空间 .ibd文件可能包含多个表的表和索引数据。MySQL 5.7.6 中引入了通用表空间。</p>
+<p>该.ibd文件的扩展名不适用于 系统表空间，它由一个或多个ibdata文件。<br>如果使用该DATA DIRECTORY =子句创建 file-per-table 表空间或通用表空间，则该 .ibd文件位于指定路径，在正常数据目录之外，并由.isl 文件指向 。<br>​</p>
+<p><img src="/images/mysql/partition/index.png" srcset="/img/loading.gif"></p>
+<h3 id="2、MySQL分区原理"><a href="#2、MySQL分区原理" class="headerlink" title="2、MySQL分区原理"></a>2、MySQL分区原理</h3><p>官方详细文档：<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/partitioning.html">https://dev.mysql.com/doc/refman/5.7/en/partitioning.html</a><br>从 MySQL 5.7.17 开始，MySQL 服务器中的通用分区处理程序已弃用，并在 MySQL 8.0 中删除，因为用于给定表的存储引擎预计会提供自己的（“本机”）分区处理程序。目前，只有InnoDB和 NDB存储引擎可以做到这一点。</p>
+<p>要准备迁移到 MySQL 8.0，任何具有非本机分区的表都应更改为使用提供本机分区的引擎，或者设为非分区。例如，要将表更改为InnoDB，请执行以下语句：</p>
+<pre><code class="hljs sql"><span class="hljs-keyword">ALTER</span> <span class="hljs-keyword">TABLE</span> table_name <span class="hljs-keyword">ENGINE</span> = <span class="hljs-keyword">INNODB</span>;</code></pre>
+<p>设置分区之后会在磁盘中产生用#分隔开的独立的分区文件</p>
+<p>还有独立一个文件为pre的分区信息表，类似磁盘分区的一个mbr分区文件</p>
+<p>分区键的数据类型。 分区键必须是整数列或解析为整数的表达式。ENUM不能使用使用列的表达式 。列或表达式值也可能是NULL. </p>
+<p>最大分区数。  不使用NDB存储引擎的给定表的最大可能分区数是 8192。这个数字包括子分区。</p>
+<h4 id="2-1、分区类型"><a href="#2-1、分区类型" class="headerlink" title="2.1、分区类型"></a>2.1、分区类型</h4><h5 id="2-1-1、-范围划分"><a href="#2-1-1、-范围划分" class="headerlink" title="2.1.1、 范围划分"></a>2.1.1、 范围划分</h5><p>分段划分： 1-10  11-20 数据落在哪个区间，则在哪个分区中。 （是一组连续的区间）<br>分区值为固定值<br>​</p>
+<p><img src="/images/mysql/partition/range.png" srcset="/img/loading.gif"></p>
+<h5 id="2-1-2、-LIST-分区"><a href="#2-1-2、-LIST-分区" class="headerlink" title="2.1.2、 LIST 分区"></a>2.1.2、 LIST 分区</h5><p>类似于分区 by RANGE，不同之处在于分区是根据几个离散的值，例如 5 、6 、8 、9是一个分区<br>分区值为固定值<br>​</p>
+<p><img src="/images/mysql/partition/list.png" srcset="/img/loading.gif"></p>
+<h4 id="2-1-4、列分区"><a href="#2-1-4、列分区" class="headerlink" title="2.1.4、列分区"></a>2.1.4、列分区</h4><p>所有整数类型：TINYINT、 SMALLINT、 MEDIUMINT、 INT ( INTEGER) 和 BIGINT。<br>DATE和 DATETIME。</p>
+<p>下面的字符串类型： CHAR， VARCHAR， BINARY，和 VARBINARY。</p>
+<p>分区值设置为列名，根据选择列对应的数据进行分区，例如时间分区</p>
+<h5 id="2-1-4-1、RANGE-COLUMNS分区RANGE在以下方面与分区有很大不同"><a href="#2-1-4-1、RANGE-COLUMNS分区RANGE在以下方面与分区有很大不同" class="headerlink" title="2.1.4.1、RANGE COLUMNS分区RANGE在以下方面与分区有很大不同"></a>2.1.4.1、RANGE COLUMNS分区RANGE在以下方面与分区有很大不同</h5><p>① 不接受表达式，只接受列名。</p>
+<p>② 接受一列或多列的列表。</p>
+<p>③ 分区基于 元组（列值列表）之间的比较，而不是标量值之间的比较。</p>
+<p>⑤ 分区列不限于整数列；字符串， DATE并且 DATETIME列也可以作为分区列。</p>
+<pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> table_namePARTITION <span class="hljs-keyword">BY</span> <span class="hljs-keyword">RANGE</span> <span class="hljs-keyword">COLUMNS</span>(column_list) (    <span class="hljs-keyword">PARTITION</span> partition_name <span class="hljs-keyword">VALUES</span> <span class="hljs-keyword">LESS</span> <span class="hljs-keyword">THAN</span> (value_list)[,    <span class="hljs-keyword">PARTITION</span> partition_name <span class="hljs-keyword">VALUES</span> <span class="hljs-keyword">LESS</span> <span class="hljs-keyword">THAN</span> (value_list)][,    ...])</code></pre>
+
+<h5 id="2-1-4-2、RANGE-COLUMNS分区RANGE在以下方面与分区有很大不同"><a href="#2-1-4-2、RANGE-COLUMNS分区RANGE在以下方面与分区有很大不同" class="headerlink" title="2.1.4.2、RANGE COLUMNS分区RANGE在以下方面与分区有很大不同"></a>2.1.4.2、RANGE COLUMNS分区RANGE在以下方面与分区有很大不同</h5><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> customers_1 (    first_name <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">25</span>),    last_name <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">25</span>),    street_1 <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">30</span>),    street_2 <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">30</span>),    city <span class="hljs-built_in">VARCHAR</span>(<span class="hljs-number">15</span>),    renewal <span class="hljs-built_in">DATE</span>)<span class="hljs-keyword">PARTITION</span> <span class="hljs-keyword">BY</span> <span class="hljs-keyword">LIST</span> <span class="hljs-keyword">COLUMNS</span>(city) (    <span class="hljs-keyword">PARTITION</span> pRegion_1 <span class="hljs-keyword">VALUES</span> <span class="hljs-keyword">IN</span>(<span class="hljs-string">&#x27;Oskarshamn&#x27;</span>, <span class="hljs-string">&#x27;Högsby&#x27;</span>, <span class="hljs-string">&#x27;Mönsterås&#x27;</span>),    <span class="hljs-keyword">PARTITION</span> pRegion_2 <span class="hljs-keyword">VALUES</span> <span class="hljs-keyword">IN</span>(<span class="hljs-string">&#x27;Vimmerby&#x27;</span>, <span class="hljs-string">&#x27;Hultsfred&#x27;</span>, <span class="hljs-string">&#x27;Västervik&#x27;</span>),    <span class="hljs-keyword">PARTITION</span> pRegion_3 <span class="hljs-keyword">VALUES</span> <span class="hljs-keyword">IN</span>(<span class="hljs-string">&#x27;Nässjö&#x27;</span>, <span class="hljs-string">&#x27;Eksjö&#x27;</span>, <span class="hljs-string">&#x27;Vetlanda&#x27;</span>),    <span class="hljs-keyword">PARTITION</span> pRegion_4 <span class="hljs-keyword">VALUES</span> <span class="hljs-keyword">IN</span>(<span class="hljs-string">&#x27;Uppvidinge&#x27;</span>, <span class="hljs-string">&#x27;Alvesta&#x27;</span>, <span class="hljs-string">&#x27;Växjo&#x27;</span>));</code></pre>
+
+<h5 id="2-1-5、-HASH-分区"><a href="#2-1-5、-HASH-分区" class="headerlink" title="2.1.5、 HASH 分区"></a>2.1.5、 HASH 分区</h5><p> 使用这种类型的分区，根据用户定义的表达式返回的值选择分区，该表达式对要插入表的行中的列值进行操作。该函数可以由任何在 MySQL 中有效的表达式组成，该表达式产生一个非负整数值。LINEAR HASH也可以使用此类型的扩展名。<br>​</p>
+<p><img src="/images/mysql/partition/hash.png" srcset="/img/loading.gif"></p>
+<h5 id="2-1-6、-KEY分区"><a href="#2-1-6、-KEY分区" class="headerlink" title="2.1.6、 KEY分区"></a>2.1.6、 KEY分区</h5><p>这种类型的分区类似于分区 by HASH，只是只提供了一个或多个要评估的列，并且 MySQL 服务器提供了自己的散列函数。这些列可以包含非整数值，因为 MySQL 提供的散列函数保证整数结果，而不管列数据类型如何。LINEAR KEY也可以使用此类型的扩展名 。<br>​</p>
+<p><img src="/images/mysql/partition/key.png" srcset="/img/loading.gif"></p>
+<p>数据库分区的一个非常常见的用途是按日期分隔数据。一些数据库系统支持显式日期分区，MySQL 在 5.7 中没有实现。但是，在 MySQL 中创建基于DATE、 TIME、 或 DATETIME列或基于使用这些列的表达式的分区方案并不困难 。</p>
+<p>按KEY或分区时LINEAR KEY，可以使用DATE、 TIME、 或 DATETIME列作为分区列，而无需对列值进行任何修改。</p>
+<h5 id="2-1-7、-子分区"><a href="#2-1-7、-子分区" class="headerlink" title="2.1.7、 子分区"></a>2.1.7、 子分区</h5><p>类似嵌套分区，每一个分区下面再加一个分区<br>​</p>
+<p><img src="/images/mysql/partition/child.png" srcset="/img/loading.gif"></p>
+<h4 id="2-7-MySQL-分区如何处理-NULL"><a href="#2-7-MySQL-分区如何处理-NULL" class="headerlink" title="2.7 MySQL 分区如何处理 NULL"></a>2.7 MySQL 分区如何处理 NULL</h4><p>NULL会被认为比任何值都小的分区里面放置</p>
+<p>具体详细使用方式为：<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/partitioning-handling-nulls.html">https://dev.mysql.com/doc/refman/5.7/en/partitioning-handling-nulls.html</a></p>
+<h2 id="二、分区与分表的区别"><a href="#二、分区与分表的区别" class="headerlink" title="二、分区与分表的区别"></a>二、分区与分表的区别</h2><p>分表：分表是从物理上分开，一张表分为多张表</p>
+<p>分区：分区是从逻辑上分开，一张表还是一张表，只是里面按照固定字段或者设定值来进行分不同的存储区</p>
+<h2 id="三、分区的优点"><a href="#三、分区的优点" class="headerlink" title="三、分区的优点"></a>三、分区的优点</h2><p>1、分区之后，查询只查询单个区，或者几个区，查询数据量总体减少，提高查询性能</p>
+<p>2、分区在逻辑上进行拆分表数据，实际上还是同一张表</p>
+<p>3、分区可以设置多个磁盘进行分区存储，比单个磁盘分区容量更大</p>
+<p>4、插入数据不需要手动的去处理插入哪个表的问题，增删改不需要修改</p>
+<p>5、不需要引入第三方中间件，有效降低开发难度</p>
+<blockquote>
+<p>官方给出优点：</p>
+</blockquote>
+<p>分区使得在一个表中存储的数据比单个磁盘或文件系统分区上存储的数据更多成为可能。<br>通过删除仅包含该数据的分区（或多个分区），通常可以轻松地从分区表中删除失去其用处的数据。相反，在某些情况下，通过添加一个或多个新分区来专门存储该数据，可以极大地促进添加新数据的过程。</p>
+<p>某些查询可以极大地优化，因为满足给定WHERE子句的数据只能存储在一个或多个分区上，这会自动从搜索中排除任何剩余的分区。由于在创建分区表后可以更改分区，因此您可以重新组织数据以增强在首次设置分区方案时可能不经常使用的频繁查询。这种排除不匹配分区（以及它们包含的任何行）的能力通常称为 分区修剪。</p>
+<p>出处：<a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.7/en/partitioning-overview.html">https://dev.mysql.com/doc/refman/5.7/en/partitioning-overview.html</a></p>
+<h2 id="四、分区的缺点"><a href="#四、分区的缺点" class="headerlink" title="四、分区的缺点"></a>四、分区的缺点</h2><p>1、表可访问性。 有时，服务器 SQL 模式的更改可能会使分区表无法使用。</p>
+<p>2、分区可能在MySQL版本上会有所差异，该问题不可控。</p>
+<p>3、存储引擎。 使用表进行分区操作、查询和更新操作通常MyISAM 比使用InnoDB或 NDB表更快。（对于有事务的表不太适合分区）</p>
+<p>4、全文索引。 分区表不支持FULLTEXT 索引或搜索，即使是使用InnoDB或 MyISAM存储引擎的分区表 。</p>
+<p>5、临时表。 临时表不能分区。</p>
+<p>6、InnoDB外键和 MySQL 分区不兼容。分区 InnoDB表不能有外键引用，也不能有外键引用的列。InnoDB具有或被外键引用的表不能被分区。InnoDB不支持将多个磁盘用于子分区。（目前仅支持此功能 MyISAM。）</p>
+<pre><code>  6.1、InnoDB使用用户定义分区 的表的定义不得包含外键引用；不能InnoDB对定义包含外键引用的表进行分区。
+
+ 6.2、任何InnoDB表定义都不能包含对用户分区表的外键引用；任何 InnoDB具有用户定义分区的表都不能包含由外键引用的列。</code></pre>
+<p>7、不支持查询缓存。 分区表不支持查询缓存，并且对于涉及分区表的查询会自动禁用。无法为此类查询启用查询缓存。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/MySQL/">MySQL</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Java-MySQL-Partition/">Java,MySQL,Partition</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明蚁点博客出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/10/14/mysql/mysql_insert_update/">
+                        <span class="hidden-mobile">深入分析MySQL replace 与 on duplicate key update 关键词</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'https://andot.org/2021/11/17/mysql/mysql_partition_research/';
+        this.page.identifier = '/2021/11/17/mysql/mysql_partition_research/';
+      };
+      function loadDisqus() {
+        (function () {
+          var d = document,
+            s = d.createElement('script');
+          s.src = '//' + '' + '.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', new Date());
+          (d.head || d.body).appendChild(s);
+        })();
+      }
+      waitElementVisible('disqus_thread', loadDisqus);
+    </script>
+    <noscript>Please enable JavaScript to view the
+      <a target="_blank" href="https://disqus.com/?ref_noscript" rel="nofollow noopener noopener">comments powered by Disqus.</a>
+    </noscript>
+  </div>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'false' === 'true',
+      loop: 'all',
+      order: 'random',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"/img/cover.jpg"},{"name":"name","artist":"artist","url":"/resource/music/yq.mp3","cover":"https://...cover.jpg"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+  <!-- 备案信息 -->
+  <div class="beian">
+    <a href="http://beian.miit.gov.cn/" target="_blank"
+       rel="nofollow noopener">鲁ICP证 号</a>
+    
+      <a
+        href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=12345678"
+        rel="nofollow noopener"
+        class="beian-police"
+        target="_blank"
+      >
+        <span class="beian-police-sep">&nbsp;|&nbsp;</span>
+        
+          <img src="/img/police_beian.png" srcset="/img/loading.gif" alt="police-icon" />
+        
+        <span>鲁公网安备12345678号</span>
+      </a>
+     
+  </div>
+
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 6,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "MySQL分区可行性调研&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
