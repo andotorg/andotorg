@@ -2,7 +2,7 @@
 
 热爱技术~~
 
-I'm a sharer!
+I'm a sharer! English name: Lucas Ser
 
 ### TAL
 
