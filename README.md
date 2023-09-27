@@ -6,7 +6,7 @@ I'm a sharer! English name: Lucas Ser
 
 ### TAL
 
-> - 💬 Ask me about--> wechat: andotorg
+- 💬 Ask me about--> wechat: andotorg
 
 <!--
 **andotorg/andotorg** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
