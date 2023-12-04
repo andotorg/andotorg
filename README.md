@@ -31,15 +31,16 @@ Here are some ideas to get you started:
 
 ### OpenSource Commit Record
 
-[✅]Skywalking-java
+[✅]Skywalking - java
 
 [https://github.com/apache/rocketmq-spring/pull/403](https://github.com/apache/skywalking-java/pull/182)
 
-[✅]RocketMq-spring
+[✅]RocketMq - spring
 
 [https://github.com/apache/rocketmq-spring/pull/403](https://github.com/apache/rocketmq-spring/pull/403)
 
-[✅]Nacos
+[✅]Alibaba - Nacos
+
 [https://github.com/alibaba/nacos/pull/6903](https://github.com/alibaba/nacos/pull/6903)
 
 [https://github.com/alibaba/nacos/pull/6068](https://github.com/alibaba/nacos/pull/6068)
