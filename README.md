@@ -33,7 +33,7 @@ Here are some ideas to get you started:
 
 #### [✅]Skywalking - java
 
-[https://github.com/apache/rocketmq-spring/pull/403](https://github.com/apache/skywalking-java/pull/182)
+[https://github.com/apache/skywalking-java/pull/182](https://github.com/apache/skywalking-java/pull/182)
 
 #### [✅]RocketMq - spring
 
