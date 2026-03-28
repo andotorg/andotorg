@@ -54,7 +54,7 @@ Here are some ideas to get you started:
 
 [https://github.com/lampnick/doctron](https://github.com/lampnick/doctron/pull/55)
 
-### []
+### [✅]openclaw-mission-control
 >
 [https://github.com/robsannaa/openclaw-mission-control](https://github.com/robsannaa/openclaw-mission-control/pull/67)
 
